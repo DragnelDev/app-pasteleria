@@ -102,3 +102,5 @@ Asegúrate de tener **Node.js** y **PostgreSQL** instalados en tu sistema.
 | **Pedidos** | `GET` | `/pedidos/cliente/:id` | Obtener historial de pedidos de un cliente. |
 | **Productos** | `GET` | `/productos` | Listar productos disponibles (visibles para clientes). |
 | **Personal** | `GET` | `/personal/pedidos` | Obtener pedidos asignados (Requiere rol de Personal). |
+
+## Autor: macDev
