@@ -1,9 +1,5 @@
 # frontend-app whit Vuejs
 
-<p align="center">
-  <a href="[http://nestjs.com/](https://vuejs.org/guide/introduction)" target="blank"><img src="[https://nestjs.com/img/logo-small.svg](https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Vue.js_Logo_2.svg/1184px-Vue.js_Logo_2.svg.png)" width="120" alt="Nest Logo" /></a>
-</p>
-
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
