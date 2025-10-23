@@ -1,48 +1,38 @@
+import { Categoria } from 'src/categorias/entities/categoria.entity';
+import { BaseEntity } from 'src/common/entities/BaseEntity';
 import { DetallePedido } from 'src/detalle-pedidos/entities/detalle-pedido.entity';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity('productos')
-export class Producto {
-  @PrimaryGeneratedColumn('identity')
-  id: number;
-
-  @Column('varchar', { length: 100 })
+export class Producto extends BaseEntity {
+  @Column({ type: 'varchar', length: 150 })
   nombre: string;
 
-  @Column('varchar', { length: 500 })
+  @Column({ type: 'text', nullable: true })
   descripcion: string;
 
-  @Column('decimal', { name: 'precio_base', precision: 10, scale: 2 })
-  precioBase: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  precio: number;
 
-  @Column('integer', { name: 'stock_actual' })
+  @Column({ type: 'int', name: 'stock_actual' })
   stockActual: number;
 
-  @Column('boolean', { name: 'requiere_personalizacion', default: false })
+  @Column({ type: 'boolean', default: false, name: 'requiere_personalizacion' })
   requierePersonalizacion: boolean;
 
-  @Column('boolean', { default: true })
+  @Column({ type: 'boolean', default: true })
   activo: boolean;
 
-  // Columnas para auditoría
-  @CreateDateColumn({ name: 'fecha_creacion' })
-  fechaCreacion: Date;
+  // RELACIONES (Claves Foráneas)
+  @Column({ name: 'id_categoria', nullable: true })
+  idCategoria: number;
 
-  @UpdateDateColumn({ name: 'fecha_modificacion' })
-  fechaModificacion: Date;
+  // Relación N:1 con Categoria
+  @ManyToOne(() => Categoria, (categoria) => categoria.productos)
+  @JoinColumn({ name: 'id_categoria' })
+  categoria: Categoria;
 
-  @DeleteDateColumn({ name: 'fecha_eliminacion' })
-  fechaEliminacion: Date;
-
-  // Un Producto puede aparecer en muchos DetallePedido.
+  // Relación 1:N con DetallePedido
   @OneToMany(() => DetallePedido, (detalle) => detalle.producto)
   detallesPedido: DetallePedido[];
 }

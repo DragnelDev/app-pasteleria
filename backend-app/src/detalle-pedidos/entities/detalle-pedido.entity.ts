@@ -1,53 +1,37 @@
+import { BaseEntity } from 'src/common/entities/BaseEntity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('detalle_pedidos')
-export class DetallePedido {
-  @PrimaryGeneratedColumn('identity')
-  id: number;
-
-  @Column('integer', { name: 'id_pedido' })
-  idPedido: number;
-
-  @Column('integer', { name: 'id_producto' })
-  idProducto: number;
-
-  @Column('integer')
+export class DetallePedido extends BaseEntity {
+  @Column({ type: 'int' })
   cantidad: number;
 
-  @Column('decimal', { name: 'precio_unitario_final', precision: 10, scale: 2 })
-  precioUnitarioFinal: number;
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    name: 'precio_unitario_final',
+  })
+  precioUnitarioFinal: number; // El precio que se cobró realmente
 
-  @Column({ name: 'notas_especiales', type: 'text', nullable: true })
-  notasEspeciales: string | null;
+  @Column({ type: 'text', nullable: true, name: 'notas_especiales' })
+  notasEspeciales: string;
 
-  // Columnas para auditoría
-  @CreateDateColumn({ name: 'fecha_creacion' })
-  fechaCreacion: Date;
+  // RELACIONES (Claves Foráneas)
+  @Column({ name: 'id_pedido' })
+  idPedido: number;
 
-  @UpdateDateColumn({ name: 'fecha_modificacion' })
-  fechaModificacion: Date;
+  @Column({ name: 'id_producto' })
+  idProducto: number;
 
-  @DeleteDateColumn({ name: 'fecha_eliminacion' })
-  fechaEliminacion: Date;
-
-  // El pedido al que pertenece este detalle
-  @ManyToOne(() => Pedido, (pedido) => pedido.detalles, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'id_pedido', referencedColumnName: 'id' })
+  // Relaciones N:1
+  @ManyToOne(() => Pedido, (pedido) => pedido.detalles)
+  @JoinColumn({ name: 'id_pedido' })
   pedido: Pedido;
 
-  // El producto que se está comprando
   @ManyToOne(() => Producto, (producto) => producto.detallesPedido)
-  @JoinColumn({ name: 'id_producto', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'id_producto' })
   producto: Producto;
 }

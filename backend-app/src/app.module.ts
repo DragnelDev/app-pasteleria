@@ -4,12 +4,15 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsuariosModule } from './usuarios/usuarios.module';
-import { ClientesModule } from './clientes/clientes.module';
-import { PersonalesModule } from './personales/personales.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
 import { ProductosModule } from './productos/productos.module';
 import { PedidosModule } from './pedidos/pedidos.module';
 import { DetallePedidosModule } from './detalle-pedidos/detalle-pedidos.module';
+import { RolesModule } from './roles/roles.module';
+import { EstadoPedidosModule } from './estado-pedidos/estado-pedidos.module';
+import { MetodoPagosModule } from './metodo-pagos/metodo-pagos.module';
+import { CategoriasModule } from './categorias/categorias.module';
+import { AuditoriaSubscriber } from './common/subscribers/auditoria.subscriber';
 
 @Module({
   imports: [
@@ -26,14 +29,16 @@ import { DetallePedidosModule } from './detalle-pedidos/detalle-pedidos.module';
       autoLoadEntities: true,
     }),
     UsuariosModule,
-    ClientesModule,
-    PersonalesModule,
     DireccionesModule,
     ProductosModule,
     PedidosModule,
     DetallePedidosModule,
+    RolesModule,
+    EstadoPedidosModule,
+    MetodoPagosModule,
+    CategoriasModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuditoriaSubscriber],
 })
 export class AppModule {}

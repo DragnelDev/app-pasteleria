@@ -1,56 +1,32 @@
-import { Cliente } from 'src/clientes/entities/cliente.entity';
+import { BaseEntity } from 'src/common/entities/BaseEntity';
 import { Pedido } from 'src/pedidos/entities/pedido.entity';
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity('direcciones')
-export class Direccion {
-  @PrimaryGeneratedColumn('identity')
-  id: number;
-
-  @Column('integer', { name: 'id_cliente' })
-  id_cliente: number;
-
-  @Column('varchar', { length: 200 })
+export class Direccion extends BaseEntity {
+  @Column({ type: 'varchar', length: 150 })
   calle: string;
 
-  @Column('varchar', { length: 10 })
+  @Column({ type: 'varchar', length: 20 })
   numero: string;
 
-  @Column('varchar', { length: 100 })
+  @Column({ type: 'varchar', length: 100 })
   ciudad: string;
 
-  @Column('varchar', { name: 'codigo_postal', length: 10 })
-  codigoPostal: string;
-
-  @Column('boolean', { name: 'es_principal', default: false })
+  @Column({ type: 'boolean', default: false, name: 'es_principal' })
   esPrincipal: boolean;
 
-  // Columnas para auditoría
-  @CreateDateColumn({ name: 'fecha_creacion' })
-  fechaCreacion: Date;
+  // RELACIONES (Claves Foráneas)
+  @Column({ name: 'id_usuario' })
+  idUsuario: number;
 
-  @UpdateDateColumn({ name: 'fecha_modificacion' })
-  fechaModificacion: Date;
+  // Relación N:1 con Usuario
+  @ManyToOne(() => Usuario, (usuario) => usuario.direcciones)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: Usuario;
 
-  @DeleteDateColumn({ name: 'fecha_eliminacion' })
-  fechaEliminacion: Date;
-
-  // Define la relación N:1. Muchas Direcciones pertenecen a un Cliente.
-  @ManyToOne(() => Cliente, (cliente) => cliente.direcciones)
-  @JoinColumn({ name: 'id_cliente', referencedColumnName: 'id' }) // Especifica la columna FK
-  cliente: Cliente;
-
-  // Una Dirección puede ser utilizada en múltiples Pedidos.
-  @OneToMany(() => Pedido, (pedido) => pedido.direccionEntrega)
+  // Relación 1:N con Pedido (una dirección puede ser usada para muchos pedidos)
+  @OneToMany(() => Pedido, (pedido) => pedido.direccion)
   pedidos: Pedido[];
 }

@@ -6,14 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
+import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 
 @Controller('pedidos')
 export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) {}
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post()
+  async createPedido(@Req() req, @Body() createPedidoDto: CreatePedidoDto) {
+    // ⭐ CORRECCIÓN: Usar @Req()
+    createPedidoDto.idUsuario = req.user.userId;
+    return this.pedidosService.create(createPedidoDto);
+  }
 
   @Post()
   create(@Body() createPedidoDto: CreatePedidoDto) {

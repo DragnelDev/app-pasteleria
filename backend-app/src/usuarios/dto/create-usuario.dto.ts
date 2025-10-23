@@ -1,41 +1,55 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import {
-  IsBoolean,
-  IsDateString,
-  IsDefined,
+  IsEmail,
+  IsInt,
   IsNotEmpty,
   IsString,
   MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class CreateUsuarioDto {
-  @ApiProperty()
-  @IsNotEmpty({ message: 'El campo email no debe estar vacío' })
-  @IsString({ message: 'El campo email debe ser de tipo cadena' })
-  @MaxLength(100, {
-    message: 'El campo email no debe exceder los 100 caracteres',
+  @ApiProperty({
+    description: 'Nombre de usuario único para login.',
+    minLength: 4,
   })
-  @Transform(({ value }): string | undefined =>
-    typeof value === 'string' ? value.trim() : value,
-  )
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(4)
+  nombreUsuario: string;
+
+  @ApiProperty({ description: 'Apellidos completos del usuario.' })
+  @IsNotEmpty()
+  @IsString()
+  apellidos: string;
+
+  @ApiProperty({
+    description:
+      'Contraseña del usuario (se recomienda un mínimo de 8 caracteres).',
+    minLength: 8,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(8)
+  clave: string; // Nota: el hashing se hace en el servicio
+
+  @ApiProperty({
+    description: 'Número de celular (opcional).',
+    required: false,
+  })
+  @IsString()
+  @MaxLength(20)
+  celular?: string;
+
+  @ApiProperty({ description: 'Correo electrónico único.', format: 'email' })
+  @IsNotEmpty()
+  @IsEmail()
   email: string;
 
-  @ApiProperty()
-  @IsNotEmpty({ message: 'El campo passwordHash no debe estar vacío' })
-  passwordHash: string;
-
-  @ApiProperty()
-  @IsDefined({ message: 'El campo fecha de registro debe estar definido' })
-  @IsDateString(
-    {},
-    { message: 'El campo fecha de registro debe ser una fecha válida' },
-  )
-  readonly fechaRegistro: Date;
-
-  @ApiProperty()
-  @IsBoolean({ message: 'El campo activo debe ser un valor booleano' })
-  @Transform(({ value }): boolean => Boolean(value))
-  @IsDefined({ message: 'El campo activo debe estar definido' })
-  readonly activo: boolean;
+  @ApiProperty({
+    description: 'ID del rol asignado (e.g., 1 para Cliente, 2 para Admin).',
+  })
+  @IsNotEmpty()
+  @IsInt()
+  idRol: number;
 }

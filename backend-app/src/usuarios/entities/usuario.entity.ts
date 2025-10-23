@@ -1,49 +1,64 @@
-import { Cliente } from 'src/clientes/entities/cliente.entity';
-import { Personal } from 'src/personales/entities/personal.entity';
+import { Direccion } from 'src/direcciones/entities/direccion.entity';
+import { Pedido } from 'src/pedidos/entities/pedido.entity';
+import { Rol } from 'src/roles/entities/rol.entity';
 import {
   Column,
-  CreateDateColumn,
-  DeleteDateColumn,
   Entity,
-  Index,
-  OneToOne,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('usuarios')
 export class Usuario {
-  @PrimaryGeneratedColumn('identity')
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('varchar', { length: 100 })
-  @Index({ unique: true })
+  @Column({
+    type: 'varchar',
+    length: 100,
+    unique: true,
+    name: 'nombre_usuario',
+  })
+  nombreUsuario: string;
+
+  @Column({ type: 'varchar', length: 150 })
+  apellidos: string;
+
+  @Column({ type: 'varchar' })
+  clave: string; // La contraseña debe estar HASHEDA
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  celular: string;
+
+  @Column({ type: 'varchar', length: 100, unique: true })
   email: string;
 
-  @Column('varchar', { name: 'password_hash', length: 250 })
-  passwordHash: string;
+  // RELACIONES (Claves Foráneas)
+  @Column({ name: 'id_rol' })
+  idRol: number; // Campo para la FK
 
-  @CreateDateColumn({ name: 'fecha_registro' })
-  fechaRegistro: Date;
+  // Relación N:1 con Rol
+  @ManyToOne(() => Rol, (rol) => rol.usuarios)
+  @JoinColumn({ name: 'id_rol' })
+  rol: Rol;
 
-  @Column('boolean', { default: true })
-  activo: boolean;
+  // Relación 1:N con Direccion
+  @OneToMany(() => Direccion, (direccion) => direccion.usuario)
+  direcciones: Direccion[];
 
-  // Columnas para auditoría
-  @CreateDateColumn({ name: 'fecha_creacion' })
+  // Relación 1:N con Pedido
+  @OneToMany(() => Pedido, (pedido) => pedido.usuario)
+  pedidos: Pedido[];
+
+  // Columnas de Auditoría (Solo Fechas)
+  @Column({ type: 'timestamp', name: 'fecha_creacion' })
   fechaCreacion: Date;
 
-  @UpdateDateColumn({ name: 'fecha_modificacion' })
+  @Column({ type: 'timestamp', name: 'fecha_modificacion' })
   fechaModificacion: Date;
 
-  @DeleteDateColumn({ name: 'fecha_eliminacion' })
-  fechaEliminacion: Date;
-
-  // Relación 1:1 con la entidad Cliente
-  @OneToOne(() => Cliente, (cliente) => cliente.usuario)
-  clientes: Cliente[]; // Objeto Cliente asociado
-
-  // Relación 1:1 con la entidad Personal
-  @OneToOne(() => Personal, (personal) => personal.usuario)
-  personales: Personal[]; // Objeto Personal asociado
+  @Column({ type: 'timestamp', name: 'fecha_eliminacion', nullable: true })
+  fechaEliminacion: Date | null;
 }

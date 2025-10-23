@@ -16,6 +16,11 @@ async function bootstrap() {
     .setDescription('API Rest del proyecto de la Pasteleria')
     .setVersion('1.0')
     .addTag('Tablas - Pasteleria')
+    .addBearerAuth(
+      // Añadir soporte para tokens JWT
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'access-token', // Nombre de la clave de seguridad
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('apidoc', app, documentFactory);
